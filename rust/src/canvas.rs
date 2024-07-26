@@ -5,6 +5,7 @@
 extern crate image;
 use std::path::Path;
 use color::Color;
+use canvas::image::ColorType;
 use color::color_add;
 use std::cmp::{min, max};
 
@@ -114,15 +115,21 @@ impl Canvas {
 
     pub fn save(&self, filename: &str) {
         if self.depth == 1 {
-            image::save_buffer(&Path::new(filename), 
-                &self.get_pixels().as_slice(), 
-                self.width as u32, 
-                self.height as u32, image::Gray(8)).unwrap()
+            image::save_buffer(
+                &Path::new(filename),
+                &self.get_pixels().as_slice(),
+                self.width as u32,
+                self.height as u32,
+                ColorType::L8,
+            ).unwrap();
         } else {
-            image::save_buffer(&Path::new(filename), 
-                &self.get_pixels().as_slice(), 
-                self.width as u32, 
-                self.height as u32, image::RGB(8)).unwrap()
+            image::save_buffer(
+                &Path::new(filename),
+                &self.get_pixels().as_slice(),
+                self.width as u32,
+                self.height as u32,
+                ColorType::Rgb8,
+            ).unwrap();
         }
     }
 

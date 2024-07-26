@@ -30,7 +30,9 @@ impl Context {
                use_triangles: bool,
                use_circles: bool, 
                use_rectangles: bool) -> Context{
-		let f = File::open(name).expect("failed to open file");
+        let f = File::open(name).unwrap_or_else(|err| {
+            panic!("Failed to open file '{}': {}", name, err);
+        });
 		let buf = BufReader::new(f);
 		let mut jpg = Decoder::new(buf);
 		let image = jpg.decode().expect("failed to decode image");
@@ -38,7 +40,12 @@ impl Context {
         let depth = match meta.pixel_format {
             jpeg_decoder::PixelFormat::RGB24 => 3,
             jpeg_decoder::PixelFormat::L8 => 1,
-            jpeg_decoder::PixelFormat::CMYK32 => 4
+            jpeg_decoder::PixelFormat::CMYK32 => 4,
+            jpeg_decoder::PixelFormat::L16 => {
+                // Provide the appropriate handling for L16
+                // Example: 2 bytes per pixel
+                2
+            },
         };
 
 		return Context {

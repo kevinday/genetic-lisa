@@ -10,6 +10,7 @@ use darwin_rs::{Individual};
 use std::fs::File;
 use std::fmt::Write;
 use context::Context;
+use std::path::PathBuf;
 use std;
 
 fn zero() -> u64 {
@@ -130,22 +131,22 @@ impl Individual for Lisa {
 
     fn mutate(&mut self) {
         match (rand() * 100.) as u8 {
-            0...10 => {
+            0..=9 => {
                 self.shapes.add_random(&self.ctx);
                 self.mutation_appends += 1;
-                },
-            10...15 => {
+            },
+            10..=14 => {
                 self.shapes.remove_shape();
                 self.mutation_pops += 1;
-                },
-            15...20 => {
+            },
+            15..=19 => {
                 self.shapes.swap();
-                self.mutation_swaps +=1;
-                }
-            20...100 => {
+                self.mutation_swaps += 1;
+            },
+            20..=99 => {
                 self.shapes.mutate();
                 self.mutation_changes += 1;
-                },
+            },
             _ => panic!("Impossible mutation")
         }
         self.mutations += 1;
@@ -172,18 +173,30 @@ impl Individual for Lisa {
 
 	fn new_fittest_found(&mut self) {
         let now = chrono::Utc::now();
-		print!("{} New fittest: {} \n", now, self.str());
+        print!("{} New fittest: {} \n", now, self.str());
         self.ctx.cache.lock().unwrap().insert(&self.shapes);
-        //let filename = format!("{}.svg", (self.calculate_fitness() / 1000_000.) as u32);
+
+        // Write to best.svg
         let mut svg = File::create("best.svg").unwrap();
-        std::io::Write::write_all(&mut svg, self.svg().as_bytes()).expect("couldn't write");
+        std::io::Write::write_all(&mut svg, self.svg().as_bytes()).expect("couldn't write best.svg");
 
+        // Write to best.json
         let mut jsonfile = File::create("best.json").unwrap();
-        std::io::Write::write_all(&mut jsonfile,
-                serde_json::to_string(&self.serialize()).expect("Serialize error").as_bytes()
-            ).expect("couldn't write json");
+        std::io::Write::write_all(
+            &mut jsonfile,
+            serde_json::to_string(&self.serialize()).expect("Serialize error").as_bytes(),
+        )
+        .expect("couldn't write best.json");
 
-        self.ctx.cache.lock().unwrap().canvas_for(&self.shapes).save("best.png");
+        // Write to ../lisa/{filename}.svg
+        let filename = format!("{}.svg", (self.calculate_fitness() / 1_000_000.) as u32);
+        let mut svg_path = PathBuf::from("./lisa");
+        svg_path.push(&filename);
+        let mut svg_file = File::create(svg_path).unwrap();
+        std::io::Write::write_all(&mut svg_file, self.svg().as_bytes()).expect("couldn't write ./lisa/{filename}.svg");
+
+        // Write the canvas image to best.png if needed
+        // self.ctx.cache.lock().unwrap().canvas_for(&self.shapes).save("best.png");
     }
 }
 

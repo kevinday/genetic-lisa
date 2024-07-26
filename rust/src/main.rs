@@ -58,15 +58,19 @@ fn main() {
                       .long("xr"))
                  .get_matches();
 
-    let population = value_t!(matches.value_of("population"), usize).unwrap_or(3);
-    let growth = value_t!(matches.value_of("exponential-growth"), f64).unwrap_or(1.0);
-    let start_with_best = matches.is_present("loadbest"); 
+    let population = value_t!(matches.value_of("population"), usize).unwrap_or(25);
+    let growth = value_t!(matches.value_of("exponential-growth"), f64).unwrap_or(1.1);
+    let start_with_best = matches.is_present("loadbest");
+    //let start_with_best = true; 
     let use_weighting = matches.is_present("weighting"); 
-    let image = value_t!(matches.value_of("image"), String).unwrap_or(String::from("lisa.jpg"));
+    let image = value_t!(matches.value_of("image"), String).unwrap_or(String::from("miggles.jpeg"));
 
-    let use_triangles = !matches.is_present("no-triangles");
-    let use_circles = !matches.is_present("no-circles");
-    let use_rectangles = !matches.is_present("no-rects");
+    //let use_triangles = !matches.is_present("no-triangles");
+    //let use_circles = !matches.is_present("no-circles");
+    //let use_rectangles = !matches.is_present("no-rects");
+    let use_triangles = true;
+    let use_circles = true;
+    let use_rectangles = true;
 
     let mut context = Context::new(&image, use_weighting, use_triangles, use_circles, use_rectangles);
 

@@ -5,7 +5,7 @@ authors = ["Peter Braden <peterbraden@peterbraden.co.uk>"]
 
 [dependencies]
 darwin-rs = {path = "./darwin-rs"}
-rand = "*"
+rand = "0.8.5"
 "jpeg-decoder" = "*"
 lazy_static = "0.2.8"
 serde = "1.0.11"
