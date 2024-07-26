@@ -61,7 +61,7 @@ fn main() {
     let population = value_t!(matches.value_of("population"), usize).unwrap_or(25);
     let growth = value_t!(matches.value_of("exponential-growth"), f64).unwrap_or(1.1);
     let start_with_best = matches.is_present("loadbest");
-    //let start_with_best = true; 
+    let start_with_best = true; 
     let use_weighting = matches.is_present("weighting"); 
     let image = value_t!(matches.value_of("image"), String).unwrap_or(String::from("miggles.jpeg"));
 
